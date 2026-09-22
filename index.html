@@ -130,7 +130,8 @@ svg.diagram{display:block;width:100%;height:auto;min-width:600px;touch-action:ma
 /* modo ampliado */
 .stage.full{position:fixed;inset:0;z-index:50;border-radius:0;display:flex;flex-direction:column}
 .stage.full .diagram-scroll{flex:1;min-height:0;display:grid;place-items:center;padding:8px 16px 16px}
-.stage.full svg.diagram{width:auto;height:100%;max-width:100%;min-width:0}
+/* todo escala junto; tope de 1100px para que no se vea desmedido */
+.stage.full svg.diagram{width:min(1100px,100%,calc((100vh - 90px)*1000/720));height:auto;min-width:0}
 body.no-scroll{overflow:hidden}
 
 /* flows */
@@ -154,7 +155,7 @@ body.no-scroll{overflow:hidden}
 .flabel rect{fill:var(--surface);stroke-width:1.5}
 .flabel.real rect{stroke:var(--real)}
 .flabel.dinero rect{stroke:var(--money)}
-.flabel text{font:600 calc(12.5px*var(--k,1)) var(--f-body);fill:var(--ink)}
+.flabel text{font:600 12.5px var(--f-body);fill:var(--ink)}
 
 /* nodes */
 .node{cursor:pointer;outline:none}
@@ -162,8 +163,8 @@ body.no-scroll{overflow:hidden}
 .node .ring{fill:none;stroke:var(--ink);stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s}
 .node .ic{fill:none;stroke:var(--node-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .node text{fill:var(--node-ink);text-anchor:middle}
-.node .nm{font:700 calc(13px*var(--k,1)) var(--f-display)}
-.node .kicker{font:700 calc(9.5px*max(var(--k,1),.85)) var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
+.node .nm{font:700 13px var(--f-display)}
+.node .kicker{font:700 9.5px var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
 .node.agente .shape{fill:var(--node)}
 .node.mercado .shape{fill:var(--surface-2)}
 .node:hover .shape,.node:focus-visible .shape{stroke:var(--ink)}
@@ -537,8 +538,7 @@ FLOWS.forEach(function(f){
 // Ubica las etiquetas visibles evitando que se superpongan entre sí o con los nombres de los nodos
 var VB = svg.viewBox.baseVal;
 function sizeLabels(){
-  var k = parseFloat(svg.style.getPropertyValue("--k")) || 1;
-  var fs = 12.5*k, h = fs*1.76, gap = 6;
+  var fs = 12.5, h = fs*1.76, gap = 6;
   var shown = FLOWS.filter(function(f){ return f.label_g.classList.contains("show"); });
   var boxes = FLOWS.map(function(f){
     var tx = f.label_g.querySelector("text");
@@ -709,22 +709,12 @@ function select(id){
 $("#tab-explorar").addEventListener("click", function(){ setMode("explorar"); });
 $("#tab-recorrido").addEventListener("click", function(){ setMode("recorrido"); });
 var stage = $(".stage");
-// En modo ampliado el dibujo crece pero el texto conserva un tamaño en pantalla moderado
-function fitText(){
-  var on = stage.classList.contains("full");
-  var scale = svg.getBoundingClientRect().width / VB.width;
-  var k = on && scale > 0 ? Math.min(1, 11.5/(12.5*scale)) : 1;
-  svg.style.setProperty("--k", k);
-  sizeLabels();
-}
-window.addEventListener("resize", function(){ if (stage.classList.contains("full")) fitText(); });
 function setFull(on){
   stage.classList.toggle("full", on);
   document.body.classList.toggle("no-scroll", on);
   $("#btn-full").setAttribute("aria-pressed", on);
   $("#full-txt").textContent = on ? "Reducir" : "Ampliar";
   $("#full-ico").setAttribute("d", on ? "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" : "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
-  fitText();
 }
 $("#btn-full").addEventListener("click", function(){ setFull(!stage.classList.contains("full")); });
 document.addEventListener("keydown", function(e){ if (e.key==="Escape" && stage.classList.contains("full")) setFull(false); });
