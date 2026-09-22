@@ -154,7 +154,7 @@ body.no-scroll{overflow:hidden}
 .flabel rect{fill:var(--surface);stroke-width:1.5}
 .flabel.real rect{stroke:var(--real)}
 .flabel.dinero rect{stroke:var(--money)}
-.flabel text{font:600 12.5px var(--f-body);fill:var(--ink)}
+.flabel text{font:600 calc(12.5px*var(--k,1)) var(--f-body);fill:var(--ink)}
 
 /* nodes */
 .node{cursor:pointer;outline:none}
@@ -162,8 +162,8 @@ body.no-scroll{overflow:hidden}
 .node .ring{fill:none;stroke:var(--ink);stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s}
 .node .ic{fill:none;stroke:var(--node-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .node text{fill:var(--node-ink);text-anchor:middle}
-.node .nm{font:700 13px var(--f-display)}
-.node .kicker{font:700 9.5px var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
+.node .nm{font:700 calc(13px*var(--k,1)) var(--f-display)}
+.node .kicker{font:700 calc(9.5px*max(var(--k,1),.85)) var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
 .node.agente .shape{fill:var(--node)}
 .node.mercado .shape{fill:var(--surface-2)}
 .node:hover .shape,.node:focus-visible .shape{stroke:var(--ink)}
@@ -530,22 +530,59 @@ FLOWS.forEach(function(f){
   var tx = el("text", {x:mid.x, y:mid.y+4.3, "text-anchor":"middle"}, g);
   tx.textContent = f.label;
   f.label_g = g; f.label_r = r; f.mid = mid;
-  f.hit.addEventListener("mouseenter", function(){ g.classList.add("show"); });
+  f.hit.addEventListener("mouseenter", function(){ g.classList.add("show"); sizeLabels(); });
   f.hit.addEventListener("mouseleave", function(){ if(!f.path.classList.contains("on") || !svg.classList.contains("is-focus")) g.classList.remove("show"); else refresh(); });
 });
 // size label pills once fonts are ready
+// Ubica las etiquetas visibles evitando que se superpongan entre sí o con los nombres de los nodos
+var VB = svg.viewBox.baseVal;
 function sizeLabels(){
-  FLOWS.forEach(function(f){
-    var bb = f.label_g.querySelector("text").getBBox();
-    var w = bb.width + 20;
-    f.label_r.setAttribute("x", f.mid.x - w/2);
-    f.label_r.setAttribute("y", f.mid.y - 11);
-    f.label_r.setAttribute("width", w);
-    f.label_r.setAttribute("height", 22);
+  var k = parseFloat(svg.style.getPropertyValue("--k")) || 1;
+  var fs = 12.5*k, h = fs*1.76, gap = 6;
+  var shown = FLOWS.filter(function(f){ return f.label_g.classList.contains("show"); });
+  var boxes = FLOWS.map(function(f){
+    var tx = f.label_g.querySelector("text");
+    tx.setAttribute("x", f.mid.x);
+    var w = tx.getBBox().width + fs*1.6;
+    return {f:f, x:f.mid.x, y:f.mid.y, w:w, h:h, on:shown.indexOf(f) > -1};
+  });
+  var obst = [];
+  Object.keys(NODES).forEach(function(id){
+    $all('[data-id="'+id+'"] text').forEach(function(t){
+      var b = t.getBBox(); obst.push({x:b.x+b.width/2, y:b.y+b.height/2, w:b.width, h:b.height});
+    });
+  });
+  var act = boxes.filter(function(b){ return b.on; });
+  function push(a, b, move){ // mueve "a" (y "b" si se puede) hasta que dejen de tocarse
+    var ox = (a.w+b.w)/2 + gap - Math.abs(a.x-b.x), oy = (a.h+b.h)/2 + gap - Math.abs(a.y-b.y);
+    if (ox <= 0 || oy <= 0) return false;
+    var sy = a.y < b.y || (a.y===b.y && a.f && b.f && a.f.mid.y <= b.f.mid.y) ? -1 : 1;
+    if (oy < ox*1.5){ a.y += sy*oy*(move?.5:1); if (move) b.y -= sy*oy*.5; }
+    else { var sx = a.x < b.x ? -1 : 1; a.x += sx*ox*(move?.5:1); if (move) b.x -= sx*ox*.5; }
+    return true;
+  }
+  for (var it=0; it<60; it++){
+    var moved = false;
+    for (var i=0;i<act.length;i++){
+      for (var j=i+1;j<act.length;j++) moved = push(act[i], act[j], true) || moved;
+      for (var o=0;o<obst.length;o++) moved = push(act[i], obst[o], false) || moved;
+      var a = act[i];
+      a.x = Math.max(VB.x + a.w/2 + 4, Math.min(VB.x + VB.width - a.w/2 - 4, a.x));
+      a.y = Math.max(VB.y + a.h/2 + 4, Math.min(VB.y + VB.height - a.h/2 - 4, a.y));
+    }
+    if (!moved) break;
+  }
+  boxes.forEach(function(b){
+    var tx = b.f.label_g.querySelector("text");
+    tx.setAttribute("x", b.x); tx.setAttribute("y", b.y + fs*.35);
+    b.f.label_r.setAttribute("x", b.x - b.w/2);
+    b.f.label_r.setAttribute("y", b.y - b.h/2);
+    b.f.label_r.setAttribute("width", b.w);
+    b.f.label_r.setAttribute("height", b.h);
+    b.f.label_r.setAttribute("rx", b.h/2); b.f.label_r.setAttribute("ry", b.h/2);
   });
 }
-sizeLabels();
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeLabels);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ sizeLabels(); });
 
 /* ---------- Build nodes ---------- */
 Object.keys(NODES).forEach(function(id){
@@ -602,6 +639,7 @@ function refresh(){
   });
   $("#hint-name").textContent = state.mode==="recorrido" ? "Paso "+(state.step+1)+" de "+TOUR.length
     : state.sel ? (NODES[state.sel].kind==="mercado" ? "Mercado de "+NODES[state.sel].name.toLowerCase() : NODES[state.sel].name) : "Todo el circuito";
+  sizeLabels();
 }
 
 /* ---------- Panel rendering ---------- */
@@ -671,12 +709,22 @@ function select(id){
 $("#tab-explorar").addEventListener("click", function(){ setMode("explorar"); });
 $("#tab-recorrido").addEventListener("click", function(){ setMode("recorrido"); });
 var stage = $(".stage");
+// En modo ampliado el dibujo crece pero el texto conserva un tamaño en pantalla moderado
+function fitText(){
+  var on = stage.classList.contains("full");
+  var scale = svg.getBoundingClientRect().width / VB.width;
+  var k = on && scale > 0 ? Math.min(1, 11.5/(12.5*scale)) : 1;
+  svg.style.setProperty("--k", k);
+  sizeLabels();
+}
+window.addEventListener("resize", function(){ if (stage.classList.contains("full")) fitText(); });
 function setFull(on){
   stage.classList.toggle("full", on);
   document.body.classList.toggle("no-scroll", on);
   $("#btn-full").setAttribute("aria-pressed", on);
   $("#full-txt").textContent = on ? "Reducir" : "Ampliar";
   $("#full-ico").setAttribute("d", on ? "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" : "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
+  fitText();
 }
 $("#btn-full").addEventListener("click", function(){ setFull(!stage.classList.contains("full")); });
 document.addEventListener("keydown", function(e){ if (e.key==="Escape" && stage.classList.contains("full")) setFull(false); });
