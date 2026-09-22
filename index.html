@@ -414,7 +414,7 @@ var NODES = {
   mundo:     {kind:"agente",  x:880, y:88,  r:44, name:"Resto del mundo", below:true},
   bienes:    {kind:"mercado", x:500, y:90,  w:236, h:62, name:"Bienes y servicios"},
   trabajo:   {kind:"mercado", x:500, y:640, w:236, h:62, name:"Trabajo"},
-  financiero:{kind:"mercado", x:500, y:470, w:220, h:62, name:"Financiero"}
+  financiero:{kind:"mercado", x:500, y:470, w:220, h:62, name:"Financiero", noDe:true}
 };
 
 var FLOWS = [
@@ -587,7 +587,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(function()
 /* ---------- Build nodes ---------- */
 Object.keys(NODES).forEach(function(id){
   var n = NODES[id];
-  var g = el("g", {"class":"node "+n.kind, tabindex:0, role:"button", "aria-label":(n.kind==="mercado"?"Mercado de ":"")+n.name, "data-id":id}, gNodes);
+  var g = el("g", {"class":"node "+n.kind, tabindex:0, role:"button", "aria-label":nodeTitle(id), "data-id":id}, gNodes);
   if (n.kind === "agente"){
     el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"ring"}, g);
     el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"shape"}, g);
@@ -600,7 +600,7 @@ Object.keys(NODES).forEach(function(id){
     el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"ring"}, g);
     el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"shape"}, g);
     el("use", {href:"#i-"+id, x:n.x-n.w/2+18, y:n.y-13, width:26, height:26, "class":"ic"}, g);
-    var k = el("text", {x:n.x+14, y:n.y-6, "class":"kicker"}, g); k.textContent = "MERCADO DE";
+    var k = el("text", {x:n.x+14, y:n.y-6, "class":"kicker"}, g); k.textContent = n.noDe ? "MERCADO" : "MERCADO DE";
     var t2 = el("text", {x:n.x+14, y:n.y+14, "class":"nm"}, g); t2.textContent = n.name;
   }
   n.g = g;
@@ -638,14 +638,14 @@ function refresh(){
     n.g.classList.toggle("sel", state.mode==="explorar" && state.sel===id);
   });
   $("#hint-name").textContent = state.mode==="recorrido" ? "Paso "+(state.step+1)+" de "+TOUR.length
-    : state.sel ? (NODES[state.sel].kind==="mercado" ? "Mercado de "+NODES[state.sel].name.toLowerCase() : NODES[state.sel].name) : "Todo el circuito";
+    : state.sel ? nodeTitle(state.sel) : "Todo el circuito";
   sizeLabels();
 }
 
 /* ---------- Panel rendering ---------- */
 var pane = $("#pane");
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
-function nodeTitle(id){ var n=NODES[id]; return n.kind==="mercado" ? "Mercado de "+n.name.toLowerCase() : n.name; }
+function nodeTitle(id){ var n=NODES[id]; return n.kind==="mercado" ? "Mercado "+(n.noDe?"":"de ")+n.name.toLowerCase() : n.name; }
 
 function renderExplorar(){
   if (!state.sel){
@@ -660,7 +660,7 @@ function renderExplorar(){
     var out = f.from===state.sel;
     var other = out ? f.to : f.from;
     var mark = f.k==="dinero" ? '<span class="dot"></span>' : '<span class="sq"></span>';
-    return '<li data-flow="'+f.id+'">'+mark+'<span><b>'+esc(f.label)+'</b> <span class="dir">'+(out?'→ entrega a ':'← recibe de ')+esc(nodeTitle(other).replace("Mercado de ","m. de "))+'</span></span></li>';
+    return '<li data-flow="'+f.id+'">'+mark+'<span><b>'+esc(f.label)+'</b> <span class="dir">'+(out?'→ entrega a ':'← recibe de ')+esc(nodeTitle(other).replace(/^Mercado /,"m. "))+'</span></span></li>';
   }).join("");
   pane.innerHTML = '<div class="pane-anim">'+
     '<span class="tag '+(n.kind==="mercado"?"m":"a")+'">'+(n.kind==="mercado"?"Mercado":"Agente económico")+'</span>'+
