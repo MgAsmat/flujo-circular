@@ -113,7 +113,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:
 .chip .both{display:inline-flex;gap:4px;align-items:center}
 
 /* ---------- Explorer ---------- */
-.explorer{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:clamp(14px,2vw,24px);align-items:start}
+.explorer{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,27vw,380px);gap:clamp(14px,2vw,24px);align-items:start;
+  width:min(1560px,100vw - 2*clamp(16px,3vw,32px));margin-inline:calc(50% - min(1560px,100vw - 2*clamp(16px,3vw,32px))/2)}
 .hero>*,.explorer>*,.duo>*,.quiz>*,.block-head>*{min-width:0}
 .stage{position:relative;background:var(--surface);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;
@@ -126,10 +127,15 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:
 .icon-btn:hover{border-color:var(--ink)}
 .icon-btn svg{width:14px;height:14px}
 .diagram-scroll{position:relative;overflow-x:auto}
-svg.diagram{display:block;width:100%;height:auto;min-width:600px;touch-action:manipulation}
+svg.diagram{display:block;width:100%;height:auto;min-width:640px;touch-action:manipulation}
+/* modo ampliado */
+.stage.full{position:fixed;inset:0;z-index:50;border-radius:0;display:flex;flex-direction:column}
+.stage.full .diagram-scroll{flex:1;min-height:0;display:grid;place-items:center;padding:8px 16px 16px}
+.stage.full svg.diagram{width:auto;height:100%;max-width:100%;min-width:0}
+body.no-scroll{overflow:hidden}
 
 /* flows */
-.flow{fill:none;stroke-width:2.4;stroke-linecap:round;transition:opacity .35s,stroke-width .35s}
+.flow{fill:none;stroke-width:2.8;stroke-linecap:round;transition:opacity .35s,stroke-width .35s}
 .flow.real{stroke:var(--real)}
 .flow.dinero{stroke:var(--money);stroke-dasharray:1 7;stroke-width:3}
 .flow-hit{fill:none;stroke:transparent;stroke-width:18;cursor:pointer}
@@ -146,10 +152,10 @@ svg.diagram{display:block;width:100%;height:auto;min-width:600px;touch-action:ma
 
 .flabel{pointer-events:none;opacity:0;transition:opacity .3s}
 .flabel.show{opacity:1}
-.flabel rect{fill:var(--surface);stroke-width:1.5}
+.flabel rect{fill:var(--surface);stroke-width:1.8}
 .flabel.real rect{stroke:var(--real)}
 .flabel.dinero rect{stroke:var(--money)}
-.flabel text{font:600 12.5px var(--f-body);fill:var(--ink)}
+.flabel text{font:600 15px var(--f-body);fill:var(--ink)}
 
 /* nodes */
 .node{cursor:pointer;outline:none}
@@ -157,8 +163,8 @@ svg.diagram{display:block;width:100%;height:auto;min-width:600px;touch-action:ma
 .node .ring{fill:none;stroke:var(--ink);stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s}
 .node .ic{fill:none;stroke:var(--node-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .node text{fill:var(--node-ink);text-anchor:middle}
-.node .nm{font:700 13px var(--f-display)}
-.node .kicker{font:700 9.5px var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
+.node .nm{font:700 15.5px var(--f-display)}
+.node .kicker{font:700 11px var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
 .node.agente .shape{fill:var(--node)}
 .node.mercado .shape{fill:var(--surface-2)}
 .node:hover .shape,.node:focus-visible .shape{stroke:var(--ink)}
@@ -254,6 +260,10 @@ section.block{padding-block:clamp(48px,7vw,88px) 0}
 footer{padding-block:56px 40px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;border-top:1px solid var(--line);margin-top:clamp(48px,7vw,88px)}
 footer p{margin:0;max-width:70ch}
 
+@media (max-width:1100px){
+  .explorer{grid-template-columns:1fr}
+  .explorer .panel{position:static}
+}
 @media (max-width:980px){
   .hero,.explorer,.block-head,.duo,.quiz{grid-template-columns:1fr}
   .panel{position:static}
@@ -318,11 +328,12 @@ footer p{margin:0;max-width:70ch}
         <span class="hint" id="hint">Seleccionado: <b id="hint-name">Familias</b></span>
         <div class="ctrl">
           <button class="icon-btn" id="btn-play" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor"><path id="play-ico" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span id="play-txt">Pausar</span></button>
+          <button class="icon-btn" id="btn-full" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path id="full-ico" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="full-txt">Ampliar</span></button>
           <button class="icon-btn" id="btn-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Ver todo</button>
         </div>
       </div>
       <div class="diagram-scroll">
-        <svg class="diagram is-focus" id="diagram" viewBox="0 0 1000 720" role="img" aria-labelledby="dg-t dg-d">
+        <svg class="diagram is-focus" id="diagram" viewBox="34 16 936 696" role="img" aria-labelledby="dg-t dg-d">
           <title id="dg-t">Diagrama del flujo circular de la economía</title>
           <desc id="dg-d">Familias y empresas intercambian bienes, servicios, trabajo y dinero a través de los mercados de bienes y servicios, de trabajo y financiero; el Gobierno cobra impuestos y ofrece servicios públicos; el resto del mundo compra nuestras exportaciones y nos vende importaciones.</desc>
           <defs>
@@ -520,8 +531,8 @@ FLOWS.forEach(function(f){
   var mid = f.path.getPointAtLength(f.len*(f.lt||0.5));
   mid = {x:mid.x+(f.lx||0), y:mid.y};
   var g = el("g", {"class":"flabel "+f.k}, gLabels);
-  var r = el("rect", {rx:11, ry:11}, g);
-  var tx = el("text", {x:mid.x, y:mid.y+4.3, "text-anchor":"middle"}, g);
+  var r = el("rect", {rx:13, ry:13}, g);
+  var tx = el("text", {x:mid.x, y:mid.y+5.2, "text-anchor":"middle"}, g);
   tx.textContent = f.label;
   f.label_g = g; f.label_r = r; f.mid = mid;
   f.hit.addEventListener("mouseenter", function(){ g.classList.add("show"); });
@@ -531,11 +542,11 @@ FLOWS.forEach(function(f){
 function sizeLabels(){
   FLOWS.forEach(function(f){
     var bb = f.label_g.querySelector("text").getBBox();
-    var w = bb.width + 20;
+    var w = bb.width + 22;
     f.label_r.setAttribute("x", f.mid.x - w/2);
-    f.label_r.setAttribute("y", f.mid.y - 11);
+    f.label_r.setAttribute("y", f.mid.y - 13);
     f.label_r.setAttribute("width", w);
-    f.label_r.setAttribute("height", 22);
+    f.label_r.setAttribute("height", 26);
   });
 }
 sizeLabels();
@@ -548,17 +559,17 @@ Object.keys(NODES).forEach(function(id){
   if (n.kind === "agente"){
     el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"ring"}, g);
     el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"shape"}, g);
-    var s = n.below ? 34 : 30;
+    var s = n.below ? 36 : 34;
     el("use", {href:"#i-"+id, x:n.x-s/2, y:n.below ? n.y-s/2 : n.y-s/2-12, width:s, height:s, "class":"ic"}, g);
     var t = el("text", {x:n.x, y:n.below ? n.y+n.r+22 : n.y+24, "class":"nm"}, g);
     t.textContent = n.name;
-    if (!n.below && n.name.length > 8) t.setAttribute("font-size","12");
+    if (!n.below && n.name.length > 8) t.setAttribute("font-size","14");
   } else {
     el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"ring"}, g);
     el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"shape"}, g);
-    el("use", {href:"#i-"+id, x:n.x-n.w/2+18, y:n.y-13, width:26, height:26, "class":"ic"}, g);
-    var k = el("text", {x:n.x+14, y:n.y-6, "class":"kicker"}, g); k.textContent = "MERCADO DE";
-    var t2 = el("text", {x:n.x+14, y:n.y+14, "class":"nm"}, g); t2.textContent = n.name;
+    el("use", {href:"#i-"+id, x:n.x-n.w/2+16, y:n.y-14, width:28, height:28, "class":"ic"}, g);
+    var k = el("text", {x:n.x+16, y:n.y-7, "class":"kicker"}, g); k.textContent = "MERCADO DE";
+    var t2 = el("text", {x:n.x+16, y:n.y+15, "class":"nm"}, g); t2.textContent = n.name;
   }
   n.g = g;
   g.addEventListener("click", function(){ select(id); });
@@ -664,6 +675,16 @@ function select(id){
 
 $("#tab-explorar").addEventListener("click", function(){ setMode("explorar"); });
 $("#tab-recorrido").addEventListener("click", function(){ setMode("recorrido"); });
+var stage = $(".stage");
+function setFull(on){
+  stage.classList.toggle("full", on);
+  document.body.classList.toggle("no-scroll", on);
+  $("#btn-full").setAttribute("aria-pressed", on);
+  $("#full-txt").textContent = on ? "Reducir" : "Ampliar";
+  $("#full-ico").setAttribute("d", on ? "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" : "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
+}
+$("#btn-full").addEventListener("click", function(){ setFull(!stage.classList.contains("full")); });
+document.addEventListener("keydown", function(e){ if (e.key==="Escape" && stage.classList.contains("full")) setFull(false); });
 $("#btn-all").addEventListener("click", function(){ state.sel = null; setMode("explorar"); });
 $all(".chip").forEach(function(c){
   c.addEventListener("click", function(){
