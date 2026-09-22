@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flujo Circular de la Economía</title>
+<meta name="description" content="Explora cómo familias, empresas, Gobierno y el resto del mundo se conectan a través de los mercados de bienes y servicios, de trabajo y financiero.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#EDF2F1;
+  --surface:#FFFFFF;
+  --surface-2:#F5F8F8;
+  --ink:#0F2436;
+  --muted:#51667A;
+  --line:#C9D6D8;
+  --real:#0E8A86;
+  --real-soft:#D5EFEE;
+  --money:#C9850C;
+  --money-soft:#FBEBCB;
+  --accent:#C8323C;
+  --node:#FFFFFF;
+  --node-ink:#0F2436;
+  --dim:.13;
+  --shadow:0 1px 2px rgba(15,36,54,.06),0 8px 28px -12px rgba(15,36,54,.22);
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0C1922;
+    --surface:#132634;
+    --surface-2:#0F202C;
+    --ink:#E4EDF1;
+    --muted:#93A8B6;
+    --line:#26404F;
+    --real:#3CC6C0;
+    --real-soft:#123A3E;
+    --money:#F2B84B;
+    --money-soft:#3A2E14;
+    --accent:#EF5A5F;
+    --node:#173041;
+    --node-ink:#E4EDF1;
+    --dim:.16;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0C1922;
+  --surface:#132634;
+  --surface-2:#0F202C;
+  --ink:#E4EDF1;
+  --muted:#93A8B6;
+  --line:#26404F;
+  --real:#3CC6C0;
+  --real-soft:#123A3E;
+  --money:#F2B84B;
+  --money-soft:#3A2E14;
+  --accent:#EF5A5F;
+  --node:#173041;
+  --node-ink:#E4EDF1;
+  --dim:.16;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -12px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font:16px/1.55 var(--f-body);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:clamp(16px,3vw,32px)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--money);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+.eyebrow{font:700 11px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- Top bar ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:34px;height:34px}
+.brand b{font:700 15px/1.1 var(--f-display)}
+.brand small{display:block;font:500 11px/1.3 var(--f-mono);color:var(--muted);letter-spacing:.06em}
+.top nav{display:flex;gap:4px;flex-wrap:wrap}
+.top nav a{font-weight:600;font-size:14px;text-decoration:none;padding:8px 12px;border-radius:999px;color:var(--muted)}
+.top nav a:hover{background:var(--surface);color:var(--ink)}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:end;padding-block:clamp(16px,4vw,40px) clamp(18px,3vw,28px)}
+.hero h1{font-size:clamp(34px,5.6vw,68px);line-height:.98;font-weight:800}
+.hero h1 .loop{display:inline-block;position:relative;color:var(--real)}
+.hero h1 .loop::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.12em;border-radius:1em;
+  background:linear-gradient(90deg,var(--real) 0 50%,var(--money) 50% 100%);background-size:200% 100%;animation:slide 4s linear infinite}
+@keyframes slide{to{background-position:-200% 0}}
+.hero p{margin:0;color:var(--muted);font-size:clamp(16px,1.4vw,18px);max-width:52ch}
+.hero-side{display:grid;gap:18px}
+
+.legend{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);
+  font:600 14px/1 var(--f-body);padding:9px 14px 9px 11px;border-radius:999px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s}
+.chip:hover{transform:translateY(-1px)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--ground)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--money);flex:none}
+.sq{width:9px;height:9px;background:var(--real);transform:rotate(45deg);flex:none}
+.chip .both{display:inline-flex;gap:4px;align-items:center}
+
+/* ---------- Explorer ---------- */
+.explorer{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:clamp(14px,2vw,24px);align-items:start}
+.hero>*,.explorer>*,.duo>*,.quiz>*,.block-head>*{min-width:0}
+.stage{position:relative;background:var(--surface);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(var(--line) 1px,transparent 1.4px);background-size:22px 22px;opacity:.55}
+.stage-bar{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px 0;flex-wrap:wrap}
+.stage-bar .hint{font-size:13px;color:var(--muted)}
+.ctrl{display:flex;gap:6px}
+.icon-btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;
+  font:600 13px/1 var(--f-body);padding:7px 12px;cursor:pointer}
+.icon-btn:hover{border-color:var(--ink)}
+.icon-btn svg{width:14px;height:14px}
+.diagram-scroll{position:relative;overflow-x:auto}
+svg.diagram{display:block;width:100%;height:auto;min-width:600px;touch-action:manipulation}
+
+/* flows */
+.flow{fill:none;stroke-width:2.4;stroke-linecap:round;transition:opacity .35s,stroke-width .35s}
+.flow.real{stroke:var(--real)}
+.flow.dinero{stroke:var(--money);stroke-dasharray:1 7;stroke-width:3}
+.flow-hit{fill:none;stroke:transparent;stroke-width:18;cursor:pointer}
+.is-focus .flow{opacity:var(--dim)}
+.is-focus .flow.on{opacity:1;stroke-width:3.4}
+.is-focus .flow.dinero.on{stroke-width:4}
+.flow.off,.flow-hit.off{display:none}
+.pt{transition:opacity .35s}
+.pt.real{fill:var(--real)}
+.pt.dinero{fill:var(--money);stroke:var(--surface);stroke-width:1.5}
+.is-focus .pt{opacity:0}
+.is-focus .pt.on{opacity:1}
+.pt.off{display:none}
+
+.flabel{pointer-events:none;opacity:0;transition:opacity .3s}
+.flabel.show{opacity:1}
+.flabel rect{fill:var(--surface);stroke-width:1.5}
+.flabel.real rect{stroke:var(--real)}
+.flabel.dinero rect{stroke:var(--money)}
+.flabel text{font:600 12.5px var(--f-body);fill:var(--ink)}
+
+/* nodes */
+.node{cursor:pointer;outline:none}
+.node .shape{fill:var(--node);stroke:var(--line);stroke-width:2;transition:stroke .25s,fill .25s}
+.node .ring{fill:none;stroke:var(--ink);stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .25s}
+.node .ic{fill:none;stroke:var(--node-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.node text{fill:var(--node-ink);text-anchor:middle}
+.node .nm{font:700 13px var(--f-display)}
+.node .kicker{font:700 9.5px var(--f-mono);letter-spacing:.12em;fill:var(--muted)}
+.node.agente .shape{fill:var(--node)}
+.node.mercado .shape{fill:var(--surface-2)}
+.node:hover .shape,.node:focus-visible .shape{stroke:var(--ink)}
+.node.sel .shape{stroke:var(--ink);stroke-width:2.5}
+.node.sel .ring{opacity:.35;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.45}100%{transform:scale(1.28);opacity:0}}
+.is-focus .node:not(.on){opacity:.4}
+.node{transition:opacity .35s}
+
+/* panel */
+.panel{background:var(--surface);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;padding:6px;gap:6px;background:var(--surface-2);margin:14px 14px 0;border-radius:999px}
+.tab{border:0;background:transparent;color:var(--muted);font:600 14px/1 var(--f-body);padding:10px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(15,36,54,.14)}
+.pane{padding:20px 22px 24px}
+.pane h2{font-size:26px;line-height:1.1;margin-top:8px}
+.pane .lede{margin:12px 0 0;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font:700 10.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.tag.m{background:var(--real-soft);color:var(--real)}
+.tag.a{background:var(--money-soft);color:var(--money)}
+.flows-list{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:8px}
+.flows-list li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;font-size:14.5px;padding:9px 12px;border-radius:14px;background:var(--surface-2);cursor:default}
+.flows-list li:hover{outline:1.5px solid var(--line)}
+.flows-list .dir{font:500 12px var(--f-mono);color:var(--muted)}
+.box{margin-top:18px;padding:14px 16px;border-radius:16px;border:1.5px dashed var(--line)}
+.box b{display:block;font:700 10.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.box p{margin:0;font-size:15px}
+.pane-anim{animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:.001;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* tour */
+.steps-bar{display:flex;gap:5px;margin-top:6px}
+.steps-bar i{flex:1;height:5px;border-radius:5px;background:var(--line);transition:background .3s}
+.steps-bar i.done{background:var(--ink)}
+.tour-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px}
+.btn{border:0;border-radius:999px;font:600 15px/1 var(--f-body);padding:13px 20px;cursor:pointer;background:var(--ink);color:var(--ground);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.step-no{font:700 12px var(--f-mono);color:var(--muted);letter-spacing:.08em}
+.coin{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--money);color:#1E1400;
+  font:800 14px var(--f-display);box-shadow:inset 0 -4px 0 rgba(0,0,0,.18);animation:spin 3.6s ease-in-out infinite}
+@keyframes spin{0%,70%{transform:rotateY(0)}85%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+
+/* ---------- Sections ---------- */
+section.block{padding-block:clamp(48px,7vw,88px) 0}
+.block-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:28px}
+.block-head h2{font-size:clamp(26px,3.4vw,40px);line-height:1.05}
+.block-head p{margin:0;color:var(--muted);max-width:56ch}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,24px)}
+.duo article{border-radius:28px;padding:clamp(22px,3vw,32px);display:grid;gap:12px;align-content:start}
+.duo .r{background:var(--real-soft)}
+.duo .d{background:var(--money-soft)}
+.duo h3{font-size:22px;display:flex;align-items:center;gap:12px}
+.duo .r h3{color:var(--real)}
+.duo .d h3{color:var(--money)}
+.duo p{margin:0;max-width:52ch}
+.duo ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.lane{position:relative;height:28px;overflow:hidden}
+.lane span{position:absolute;top:9px;animation:run 5s linear infinite}
+.lane .sq{top:9px}
+@keyframes run{from{left:-5%}to{left:100%}}
+
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.agent-btn{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;
+  padding:16px 18px;border-radius:20px;background:var(--surface);border:1.5px solid transparent;transition:border-color .2s,transform .2s}
+.agent-btn:hover,.agent-btn:focus-visible{border-color:var(--ink);transform:translateY(-2px)}
+.agent-btn .ico{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2)}
+.agent-btn.mk .ico{border-radius:14px}
+.agent-btn svg{width:26px;height:26px;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.agent-btn b{font:700 15px/1.2 var(--f-display);display:block}
+.agent-btn small{color:var(--muted);font-size:13.5px}
+
+/* quiz */
+.quiz{background:var(--ink);color:var(--ground);border-radius:32px;padding:clamp(22px,4vw,48px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(20px,4vw,48px)}
+.quiz h2{font-size:clamp(26px,3.4vw,40px);line-height:1.05}
+.quiz .intro p{opacity:.75;margin:14px 0 0}
+.score{margin-top:24px;display:flex;align-items:baseline;gap:8px;font-family:var(--f-display)}
+.score strong{font-size:56px;line-height:1;color:var(--money)}
+.score span{opacity:.7}
+.q{border-top:1px solid color-mix(in srgb,var(--ground) 18%,transparent);padding-block:18px}
+.q:first-child{border-top:0;padding-top:0}
+.q p{margin:0 0 12px;font-weight:600;font-size:17px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid color-mix(in srgb,var(--ground) 30%,transparent);background:transparent;color:var(--ground);border-radius:999px;padding:9px 15px;font:500 14.5px/1.2 var(--f-body);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ground)}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--real);border-color:var(--real);color:#fff}
+.opt.no{border-color:var(--accent);color:var(--accent);text-decoration:line-through}
+.fb{margin-top:10px;font-size:14px;opacity:.85;min-height:0}
+
+footer{padding-block:56px 40px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;border-top:1px solid var(--line);margin-top:clamp(48px,7vw,88px)}
+footer p{margin:0;max-width:70ch}
+
+@media (max-width:980px){
+  .hero,.explorer,.block-head,.duo,.quiz{grid-template-columns:1fr}
+  .panel{position:static}
+  .legend .chip{font-size:13.5px}
+}
+@media (max-width:560px){
+  .top nav{display:none}
+  .stage,.panel{border-radius:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-familias" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 9.8V20h13V9.8M10 20v-5.5h4V20"/></symbol>
+    <symbol id="i-empresas" viewBox="0 0 24 24"><path d="M3 20V11l5 3v-3l5 3V5h4v15M2.5 20h19M17 9h3v11"/></symbol>
+    <symbol id="i-gobierno" viewBox="0 0 24 24"><path d="M3 9 12 4l9 5M4 9h16M6 9v8M10 9v8M14 9v8M18 9v8M4 17h16M3 20h18"/></symbol>
+    <symbol id="i-mundo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3.2 3.4-3.2 14.6 0 18M12 3c3.2 3.4 3.2 14.6 0 18"/></symbol>
+    <symbol id="i-bienes" viewBox="0 0 24 24"><path d="M3 4h2.6l2.2 11h10.4L20.5 7.5H6.4"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol>
+    <symbol id="i-trabajo" viewBox="0 0 24 24"><rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5V5h6v2.5M3.5 13h17M11 13v2h2v-2"/></symbol>
+    <symbol id="i-financiero" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="5.5" ry="2.5"/><path d="M3.5 7v4c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5V7M3.5 11v4c0 1.4 2.5 2.5 5.5 2.5 1 0 2-.1 2.8-.4"/><path d="m14 18 3-3 2 2 3-3.5M19.5 13.5H22V16"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#inicio">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="15" fill="none" stroke="var(--real)" stroke-width="4" stroke-dasharray="47 47" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="15" fill="none" stroke="var(--money)" stroke-width="4" stroke-dasharray="1 6.5" stroke-dashoffset="-47" stroke-linecap="round" transform="rotate(180 20 20)"/>
+        <circle cx="20" cy="20" r="4" fill="var(--ink)"/>
+      </svg>
+      <span><b>Flujo Circular</b><small>SALA EDUCATIVA DE ECONOMÍA</small></span>
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#explorar">Explorar</a>
+      <a href="#flujos">Dos flujos</a>
+      <a href="#actores">Actores</a>
+      <a href="#quiz">Pon a prueba</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="inicio">
+    <h1>La economía es un <span class="loop">circuito</span> que nunca se detiene.</h1>
+    <div class="hero-side">
+      <p>Cada día trabajamos, compramos, ahorramos, pedimos préstamos y pagamos impuestos. Esas decisiones conectan a <strong>familias, empresas, Gobierno y el resto del mundo</strong> a través de tres mercados. Toca cualquier pieza del diagrama para ver qué entrega y qué recibe.</p>
+      <div class="legend" role="group" aria-label="Filtrar flujos">
+        <button class="chip" data-filter="todos" aria-pressed="true"><span class="both"><span class="sq"></span><span class="dot"></span></span>Todos</button>
+        <button class="chip" data-filter="real" aria-pressed="false"><span class="sq"></span>Flujo real</button>
+        <button class="chip" data-filter="dinero" aria-pressed="false"><span class="dot"></span>Flujo de dinero</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="explorer" id="explorar" aria-label="Diagrama interactivo">
+    <div class="stage">
+      <div class="stage-bar">
+        <span class="hint" id="hint">Seleccionado: <b id="hint-name">Familias</b></span>
+        <div class="ctrl">
+          <button class="icon-btn" id="btn-play" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor"><path id="play-ico" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span id="play-txt">Pausar</span></button>
+          <button class="icon-btn" id="btn-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Ver todo</button>
+        </div>
+      </div>
+      <div class="diagram-scroll">
+        <svg class="diagram is-focus" id="diagram" viewBox="0 0 1000 720" role="img" aria-labelledby="dg-t dg-d">
+          <title id="dg-t">Diagrama del flujo circular de la economía</title>
+          <desc id="dg-d">Familias y empresas intercambian bienes, servicios, trabajo y dinero a través de los mercados de bienes y servicios, de trabajo y financiero; el Gobierno cobra impuestos y ofrece servicios públicos; el resto del mundo compra nuestras exportaciones y nos vende importaciones.</desc>
+          <defs>
+            <marker id="ar-real" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 9 5 0 9z" fill="var(--real)"/></marker>
+            <marker id="ar-dinero" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 9 5 0 9z" fill="var(--money)"/></marker>
+          </defs>
+          <g id="g-flows"></g>
+          <g id="g-pts"></g>
+          <g id="g-nodes"></g>
+          <g id="g-labels"></g>
+        </svg>
+      </div>
+    </div>
+
+    <aside class="panel" aria-live="polite">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-explorar" aria-selected="true" aria-controls="pane">Explorar</button>
+        <button class="tab" role="tab" id="tab-recorrido" aria-selected="false" aria-controls="pane">Sigue un sol</button>
+      </div>
+      <div class="pane" id="pane"></div>
+    </aside>
+  </section>
+
+  <section class="block" id="flujos">
+    <div class="block-head">
+      <h2>Dos corrientes que avanzan en sentidos opuestos</h2>
+      <p>Por cada cosa que se entrega hay un pago que va en sentido contrario. Si sigues los rombos verás lo que se produce; si sigues las monedas, verás cómo se paga.</p>
+    </div>
+    <div class="duo">
+      <article class="r">
+        <h3><span class="sq" style="width:14px;height:14px"></span>Flujo real</h3>
+        <div class="lane" aria-hidden="true"><span class="sq"></span><span class="sq" style="animation-delay:-1.6s"></span><span class="sq" style="animation-delay:-3.3s"></span></div>
+        <p>Es todo lo que se produce y se entrega: los bienes y servicios que las empresas venden, y el trabajo que las familias ofrecen.</p>
+        <ul><li>Pan, ropa, celulares, electrodomésticos</li><li>Transporte, educación, salud, entretenimiento</li><li>Horas de trabajo, conocimientos y talento</li></ul>
+      </article>
+      <article class="d">
+        <h3><span class="dot" style="width:14px;height:14px"></span>Flujo de dinero</h3>
+        <div class="lane" aria-hidden="true"><span class="dot" style="animation-direction:reverse"></span><span class="dot" style="animation-direction:reverse;animation-delay:-1.6s"></span><span class="dot" style="animation-direction:reverse;animation-delay:-3.3s"></span></div>
+        <p>Son los pagos en soles (S/) que van en sentido contrario: lo que gastan las familias, lo que las empresas pagan como salarios, los impuestos, el ahorro y los préstamos.</p>
+        <ul><li>Gasto en consumo e ingresos por ventas</li><li>Salarios, impuestos y compras públicas</li><li>Ahorro, créditos y pago de intereses</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="actores">
+    <div class="block-head">
+      <h2>Cuatro agentes, tres mercados</h2>
+      <p>Los <strong>agentes</strong> son quienes toman decisiones económicas. Los <strong>mercados</strong> son los espacios donde se encuentran para comprar, vender, contratar, ahorrar o pedir prestado. Elige uno para verlo en el diagrama.</p>
+    </div>
+    <div class="agents" id="agents"></div>
+  </section>
+
+  <section class="block" id="quiz">
+    <div class="quiz">
+      <div class="intro">
+        <span class="eyebrow" style="color:inherit;opacity:.6">Pon a prueba lo aprendido</span>
+        <h2 style="margin-top:12px">¿Por dónde pasa tu sol?</h2>
+        <p>Cinco preguntas rápidas sobre el flujo circular. Responde y comprueba al instante.</p>
+        <div class="score" aria-live="polite"><strong id="score">0</strong><span id="score-of">de 5 correctas</span></div>
+        <button class="btn ghost" id="quiz-reset" style="margin-top:18px;color:var(--ground);border-color:color-mix(in srgb,var(--ground) 30%,transparent)">Reiniciar</button>
+      </div>
+      <div id="questions"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Contenido educativo basado en el recurso <a href="https://www.bcrp.gob.pe/apps/flujo-circular/index.php">“Flujo Circular de la Economía”</a> de la Sala Educativa de Economía del Banco Central de Reserva del Perú. El diagrama es una simplificación con fines didácticos.</p>
+    <p><a href="https://www.bcrp.gob.pe/se-de-economia.html">Sala Educativa de Economía</a></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var NS = "http://www.w3.org/2000/svg";
+
+/* ---------- Data ---------- */
+var NODES = {
+  familias:  {kind:"agente",  x:140, y:370, r:60, name:"Familias"},
+  empresas:  {kind:"agente",  x:860, y:370, r:60, name:"Empresas"},
+  gobierno:  {kind:"agente",  x:500, y:282, r:52, name:"Gobierno"},
+  mundo:     {kind:"agente",  x:880, y:88,  r:44, name:"Resto del mundo", below:true},
+  bienes:    {kind:"mercado", x:500, y:90,  w:236, h:62, name:"Bienes y servicios"},
+  trabajo:   {kind:"mercado", x:500, y:640, w:236, h:62, name:"Trabajo"},
+  financiero:{kind:"mercado", x:500, y:470, w:220, h:62, name:"Financiero"}
+};
+
+var FLOWS = [
+  {id:"f_gasto",   from:"familias", to:"bienes",   k:"dinero", label:"Gasto en consumo",      d:"M112 314 C112 170 240 70 380 72"},
+  {id:"f_bienes",  from:"bienes",   to:"familias", k:"real",   label:"Bienes y servicios",    d:"M382 110 C270 118 176 196 166 312"},
+  {id:"e_oferta",  from:"empresas", to:"bienes",   k:"real",   label:"Producción",            d:"M888 314 C888 170 760 70 620 72"},
+  {id:"e_ventas",  from:"bienes",   to:"empresas", k:"dinero", label:"Ingresos por ventas",   d:"M618 110 C730 118 824 196 834 312"},
+  {id:"f_trabajo", from:"familias", to:"trabajo",  k:"real",   label:"Trabajo",               d:"M112 426 C112 570 240 666 380 660"},
+  {id:"f_salario", from:"trabajo",  to:"familias", k:"dinero", label:"Salarios",              d:"M382 624 C270 616 176 540 166 428"},
+  {id:"e_trabajo", from:"trabajo",  to:"empresas", k:"real",   label:"Trabajadores",          d:"M620 660 C760 666 888 570 888 426"},
+  {id:"e_salario", from:"empresas", to:"trabajo",  k:"dinero", label:"Pago de salarios",      d:"M834 428 C824 540 730 616 618 624"},
+  {id:"f_imp",     from:"familias", to:"gobierno", k:"dinero", label:"Impuestos",             d:"M198 346 C280 300 360 262 444 268"},
+  {id:"g_serv",    from:"gobierno", to:"familias", k:"real",   label:"Servicios públicos",    d:"M450 300 C370 318 290 352 200 376"},
+  {id:"e_imp",     from:"empresas", to:"gobierno", k:"dinero", label:"Impuestos",             d:"M802 346 C720 300 640 262 556 268"},
+  {id:"g_compras", from:"gobierno", to:"empresas", k:"dinero", label:"Compras y obras públicas", d:"M550 300 C630 318 710 352 800 376"},
+  {id:"f_ahorro",  from:"familias", to:"financiero", k:"dinero", label:"Ahorro",              d:"M188 406 C250 440 320 458 384 460"},
+  {id:"mf_cred_f", from:"financiero", to:"familias", k:"dinero", label:"Créditos",           d:"M390 490 C310 500 230 478 176 424"},
+  {id:"mf_prest",  from:"financiero", to:"empresas", k:"dinero", label:"Préstamos para invertir", d:"M612 462 C690 458 760 440 812 406"},
+  {id:"e_int",     from:"empresas", to:"financiero", k:"dinero", label:"Pago de intereses",  d:"M826 426 C780 480 700 500 614 490"},
+  {id:"exp",       from:"bienes",   to:"mundo",    k:"real",   label:"Exportaciones",         d:"M620 76 C700 44 780 40 834 70"},
+  {id:"imp",       from:"mundo",    to:"bienes",   k:"real",   label:"Importaciones",         d:"M834 108 C780 138 700 136 620 104"}
+];
+
+var INFO = {
+  familias:{
+    lede:"Son la base de la sociedad. Obtienen ingresos trabajando en empresas o en sus propios negocios y los usan para comprar alimentos, transporte, educación y salud.",
+    ej:"Rosa trabaja en una panadería. Con su sueldo paga el pasaje, compra útiles para sus hijos y ahorra una parte cada mes en una caja municipal.",
+    dato:"Las familias cumplen varios papeles a la vez: ofrecen trabajo, consumen, ahorran, piden créditos y pagan impuestos."
+  },
+  empresas:{
+    lede:"Producen los bienes y servicios que usamos a diario, desde alimentos y transporte hasta educación y entretenimiento. Para hacerlo contratan trabajadores y, muchas veces, piden préstamos para invertir.",
+    ej:"Una panadería compra harina, contrata a tres panaderos y vende pan cada mañana. Con un préstamo compra un horno nuevo y produce más.",
+    dato:"Las empresas también venden al exterior: el Perú exporta cobre, oro, café y es uno de los mayores exportadores de arándanos del mundo."
+  },
+  gobierno:{
+    lede:"Recauda impuestos de familias y empresas y con esos recursos ofrece servicios públicos: educación, salud, seguridad e infraestructura como pistas, puentes y hospitales.",
+    ej:"Cuando compras un producto, el precio ya incluye el IGV. Ese dinero ayuda a financiar colegios públicos, postas médicas y carreteras.",
+    dato:"El Gobierno también es un gran comprador: contrata a empresas para construir obras y le compra bienes y servicios al mercado."
+  },
+  mundo:{
+    lede:"El comercio internacional permite a los países exportar e importar bienes y servicios. Así se amplían los mercados para nuestras empresas y tenemos más variedad de productos.",
+    ej:"Una agroexportadora de La Libertad vende arándanos a Europa, mientras una tienda de Lima importa computadoras fabricadas en Asia.",
+    dato:"Las exportaciones traen divisas al país; con ellas pagamos las importaciones, como combustibles, maquinaria o el trigo con el que se hace gran parte del pan."
+  },
+  bienes:{
+    lede:"Aquí interactúan personas, empresas y el Gobierno comprando y vendiendo bienes, como alimentos, ropa o electrodomésticos, y servicios, como transporte, educación, salud o entretenimiento.",
+    ej:"El mercado del barrio, una tienda en línea o una cabina de internet: donde se compra y se vende algo, hay un mercado de bienes y servicios.",
+    dato:"El precio es la señal que coordina este mercado: si muchas personas quieren un producto y hay poco, su precio tiende a subir."
+  },
+  trabajo:{
+    lede:"Las familias ofrecen su tiempo, sus conocimientos y su esfuerzo; las empresas y el Gobierno los contratan. A cambio, los trabajadores reciben un salario.",
+    ej:"Una estudiante que termina la carrera de enfermería postula a un hospital; el hospital la contrata y le paga una remuneración mensual.",
+    dato:"El salario es el precio del trabajo. Mejor educación y capacitación suelen traducirse en mayor productividad y mejores ingresos."
+  },
+  financiero:{
+    lede:"Personas, empresas y el Gobierno depositan aquí el dinero que les sobra y también pueden pedir préstamos. Bancos, cajas y cooperativas conectan a quienes ahorran con quienes necesitan financiamiento.",
+    ej:"Los ahorros de muchas familias en un banco permiten que ese banco preste dinero a una empresa que quiere ampliar su fábrica.",
+    dato:"La tasa de interés es el precio del dinero. El BCRP fija la tasa de interés de referencia para mantener la inflación dentro de su meta de 1 % a 3 % anual."
+  }
+};
+
+var TOUR = [
+  {t:"Rosa ofrece su trabajo", flows:["f_trabajo","e_trabajo"], txt:"Rosa vive en Arequipa y trabaja en una panadería. En el mercado de trabajo, su tiempo y su esfuerzo llegan a la empresa."},
+  {t:"Recibe su sueldo", flows:["e_salario","f_salario"], txt:"A fin de mes, la panadería le paga su salario. Así el dinero pasa de la empresa a la familia."},
+  {t:"Sale de compras", flows:["f_gasto","e_ventas","f_bienes"], txt:"Rosa compra pan, útiles y paga el pasaje. Su gasto se convierte en los ingresos por ventas de muchas empresas."},
+  {t:"Harina que llega de lejos", flows:["imp","e_oferta","exp"], txt:"La panadería usa trigo importado para producir. Al mismo tiempo, otras empresas peruanas exportan cobre o arándanos y traen divisas al país."},
+  {t:"Todos aportan", flows:["f_imp","e_imp","g_serv","g_compras"], txt:"En cada compra Rosa paga IGV y la panadería paga impuesto a la renta. Con esos recursos el Gobierno financia colegios, postas y obras que construyen las empresas."},
+  {t:"Ahorro que se vuelve inversión", flows:["f_ahorro","mf_prest","e_int"], txt:"Rosa ahorra una parte de su sueldo. El banco presta ese dinero a la panadería para comprar un horno nuevo, y la panadería le devuelve el préstamo con intereses."},
+  {t:"El circuito vuelve a empezar", flows:"all", txt:"Con el nuevo horno, la panadería produce más y contrata a otra persona. Más ingresos, más consumo, más producción: la economía sigue girando."}
+];
+
+var QUIZ = [
+  {q:"¿Qué recibe una familia a cambio de ofrecer su trabajo?", o:["Salarios","Impuestos","Importaciones"], a:0, fb:"Correcto: en el mercado de trabajo, el salario es el pago por el trabajo."},
+  {q:"¿En qué mercado se determina la tasa de interés?", o:["Mercado de trabajo","Mercado financiero","Mercado de bienes y servicios"], a:1, fb:"La tasa de interés es el precio del dinero que se ahorra o se presta."},
+  {q:"Cuando el Perú vende arándanos a Europa, se trata de…", o:["Una importación","Una transferencia","Una exportación"], a:2, fb:"Vender al exterior es exportar; ingresan divisas al país."},
+  {q:"¿Con qué financia el Gobierno la salud, la educación y la seguridad pública?", o:["Con los impuestos","Con las importaciones","Con los salarios de sus trabajadores"], a:0, fb:"Los impuestos de familias y empresas financian los servicios públicos."},
+  {q:"¿Qué circula en el flujo real?", o:["Solo dinero","Bienes, servicios y trabajo","Créditos e intereses"], a:1, fb:"El flujo real es lo que se produce y se entrega; el dinero va en sentido contrario."}
+];
+
+/* ---------- Helpers ---------- */
+function el(tag, attrs, parent){
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function $(s){ return document.querySelector(s); }
+function $all(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); }
+
+var svg = $("#diagram"), gFlows = $("#g-flows"), gPts = $("#g-pts"), gNodes = $("#g-nodes"), gLabels = $("#g-labels");
+var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+var state = { sel:"familias", filter:"todos", mode:"explorar", step:0, playing:!reduce };
+
+/* ---------- Build flows ---------- */
+FLOWS.forEach(function(f){
+  f.path = el("path", {d:f.d, "class":"flow "+f.k, "marker-end":"url(#ar-"+f.k+")"}, gFlows);
+  f.hit = el("path", {d:f.d, "class":"flow-hit"}, gFlows);
+  f.len = f.path.getTotalLength();
+  f.pts = [];
+  var n = Math.max(2, Math.round(f.len/110));
+  for (var i=0;i<n;i++){
+    var p = f.k==="dinero" ? el("circle",{r:5.5,"class":"pt dinero"},gPts) : el("rect",{width:9,height:9,x:-4.5,y:-4.5,"class":"pt real"},gPts);
+    f.pts.push({e:p, o:i/n});
+  }
+  // label
+  var mid = f.path.getPointAtLength(f.len*0.5);
+  var g = el("g", {"class":"flabel "+f.k}, gLabels);
+  var r = el("rect", {rx:11, ry:11}, g);
+  var tx = el("text", {x:mid.x, y:mid.y+4.3, "text-anchor":"middle"}, g);
+  tx.textContent = f.label;
+  f.label_g = g; f.label_r = r; f.mid = mid;
+  f.hit.addEventListener("mouseenter", function(){ g.classList.add("show"); });
+  f.hit.addEventListener("mouseleave", function(){ if(!f.path.classList.contains("on") || !svg.classList.contains("is-focus")) g.classList.remove("show"); else refresh(); });
+});
+// size label pills once fonts are ready
+function sizeLabels(){
+  FLOWS.forEach(function(f){
+    var bb = f.label_g.querySelector("text").getBBox();
+    var w = bb.width + 20;
+    f.label_r.setAttribute("x", f.mid.x - w/2);
+    f.label_r.setAttribute("y", f.mid.y - 11);
+    f.label_r.setAttribute("width", w);
+    f.label_r.setAttribute("height", 22);
+  });
+}
+sizeLabels();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeLabels);
+
+/* ---------- Build nodes ---------- */
+Object.keys(NODES).forEach(function(id){
+  var n = NODES[id];
+  var g = el("g", {"class":"node "+n.kind, tabindex:0, role:"button", "aria-label":(n.kind==="mercado"?"Mercado de ":"")+n.name, "data-id":id}, gNodes);
+  if (n.kind === "agente"){
+    el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"ring"}, g);
+    el("circle", {cx:n.x, cy:n.y, r:n.r, "class":"shape"}, g);
+    var s = n.below ? 34 : 30;
+    el("use", {href:"#i-"+id, x:n.x-s/2, y:n.below ? n.y-s/2 : n.y-s/2-12, width:s, height:s, "class":"ic"}, g);
+    var t = el("text", {x:n.x, y:n.below ? n.y+n.r+22 : n.y+24, "class":"nm"}, g);
+    t.textContent = n.name;
+    if (!n.below && n.name.length > 8) t.setAttribute("font-size","12");
+  } else {
+    el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"ring"}, g);
+    el("rect", {x:n.x-n.w/2, y:n.y-n.h/2, width:n.w, height:n.h, rx:n.h/2, "class":"shape"}, g);
+    el("use", {href:"#i-"+id, x:n.x-n.w/2+18, y:n.y-13, width:26, height:26, "class":"ic"}, g);
+    var k = el("text", {x:n.x+14, y:n.y-6, "class":"kicker"}, g); k.textContent = "MERCADO DE";
+    var t2 = el("text", {x:n.x+14, y:n.y+14, "class":"nm"}, g); t2.textContent = n.name;
+  }
+  n.g = g;
+  g.addEventListener("click", function(){ select(id); });
+  g.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); select(id); } });
+});
+
+/* ---------- Highlight logic ---------- */
+function activeFlowIds(){
+  if (state.mode === "recorrido"){
+    var s = TOUR[state.step];
+    return s.flows === "all" ? null : s.flows;
+  }
+  if (!state.sel) return null;
+  return FLOWS.filter(function(f){ return f.from===state.sel || f.to===state.sel; }).map(function(f){ return f.id; });
+}
+function refresh(){
+  var ids = activeFlowIds();
+  var focus = !!ids;
+  svg.classList.toggle("is-focus", focus);
+  var onNodes = {};
+  FLOWS.forEach(function(f){
+    var hidden = state.filter !== "todos" && state.filter !== f.k;
+    var on = !focus || ids.indexOf(f.id) > -1;
+    f.path.classList.toggle("off", hidden); f.hit.classList.toggle("off", hidden);
+    f.path.classList.toggle("on", on);
+    f.pts.forEach(function(p){ p.e.classList.toggle("on", on); p.e.classList.toggle("off", hidden); });
+    f.label_g.classList.toggle("show", focus && on && !hidden);
+    if (on && !hidden){ onNodes[f.from]=1; onNodes[f.to]=1; }
+  });
+  if (state.mode==="explorar" && state.sel) onNodes[state.sel]=1;
+  Object.keys(NODES).forEach(function(id){
+    var n = NODES[id];
+    n.g.classList.toggle("on", !!onNodes[id]);
+    n.g.classList.toggle("sel", state.mode==="explorar" && state.sel===id);
+  });
+  $("#hint-name").textContent = state.mode==="recorrido" ? "Paso "+(state.step+1)+" de "+TOUR.length
+    : state.sel ? (NODES[state.sel].kind==="mercado" ? "Mercado de "+NODES[state.sel].name.toLowerCase() : NODES[state.sel].name) : "Todo el circuito";
+}
+
+/* ---------- Panel rendering ---------- */
+var pane = $("#pane");
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+function nodeTitle(id){ var n=NODES[id]; return n.kind==="mercado" ? "Mercado de "+n.name.toLowerCase() : n.name; }
+
+function renderExplorar(){
+  if (!state.sel){
+    pane.innerHTML = '<div class="pane-anim"><span class="tag">Vista general</span><h2>Todo el circuito</h2>'+
+      '<p class="lede">Estás viendo los '+FLOWS.length+' flujos a la vez. Los rombos representan bienes, servicios y trabajo; las monedas, los pagos en soles. Elige un agente o un mercado para ver solo sus conexiones.</p>'+
+      '<div class="box"><b>Idea clave</b><p>Lo que para uno es un gasto, para otro es un ingreso. Por eso el flujo es circular.</p></div></div>';
+    return;
+  }
+  var n = NODES[state.sel], info = INFO[state.sel];
+  var rel = FLOWS.filter(function(f){ return f.from===state.sel || f.to===state.sel; });
+  var items = rel.map(function(f){
+    var out = f.from===state.sel;
+    var other = out ? f.to : f.from;
+    var mark = f.k==="dinero" ? '<span class="dot"></span>' : '<span class="sq"></span>';
+    return '<li data-flow="'+f.id+'">'+mark+'<span><b>'+esc(f.label)+'</b> <span class="dir">'+(out?'→ entrega a ':'← recibe de ')+esc(nodeTitle(other).replace("Mercado de ","m. de "))+'</span></span></li>';
+  }).join("");
+  pane.innerHTML = '<div class="pane-anim">'+
+    '<span class="tag '+(n.kind==="mercado"?"m":"a")+'">'+(n.kind==="mercado"?"Mercado":"Agente económico")+'</span>'+
+    '<h2>'+esc(nodeTitle(state.sel))+'</h2>'+
+    '<p class="lede">'+esc(info.lede)+'</p>'+
+    '<ul class="flows-list">'+items+'</ul>'+
+    '<div class="box"><b>En la vida diaria</b><p>'+esc(info.ej)+'</p></div>'+
+    '<div class="box" style="border-style:solid;background:var(--surface-2)"><b>¿Sabías que…?</b><p>'+esc(info.dato)+'</p></div>'+
+  '</div>';
+  $all(".flows-list li").forEach(function(li){
+    var f = FLOWS.filter(function(x){ return x.id===li.dataset.flow; })[0];
+    li.addEventListener("mouseenter", function(){ f.path.style.strokeWidth = "6"; });
+    li.addEventListener("mouseleave", function(){ f.path.style.strokeWidth = ""; });
+  });
+}
+
+function renderRecorrido(){
+  var s = TOUR[state.step];
+  var bars = TOUR.map(function(_,i){ return '<i class="'+(i<=state.step?"done":"")+'"></i>'; }).join("");
+  pane.innerHTML = '<div class="pane-anim">'+
+    '<div style="display:flex;align-items:center;gap:14px"><span class="coin" aria-hidden="true">S/</span><div><span class="step-no">PASO '+(state.step+1)+' / '+TOUR.length+'</span><div class="steps-bar">'+bars+'</div></div></div>'+
+    '<h2 style="margin-top:18px">'+esc(s.t)+'</h2>'+
+    '<p class="lede">'+esc(s.txt)+'</p>'+
+    '<div class="tour-nav"><button class="btn ghost" id="prev" '+(state.step===0?"disabled":"")+'>Anterior</button>'+
+    '<button class="btn" id="next">'+(state.step===TOUR.length-1?"Volver al inicio":"Siguiente")+'</button></div>'+
+  '</div>';
+  $("#prev").addEventListener("click", function(){ go(state.step-1); });
+  $("#next").addEventListener("click", function(){ go(state.step===TOUR.length-1 ? 0 : state.step+1); });
+}
+function go(i){ state.step = Math.max(0, Math.min(TOUR.length-1, i)); renderRecorrido(); refresh(); }
+
+function render(){ state.mode==="explorar" ? renderExplorar() : renderRecorrido(); refresh(); }
+
+function setMode(m){
+  state.mode = m;
+  $("#tab-explorar").setAttribute("aria-selected", m==="explorar");
+  $("#tab-recorrido").setAttribute("aria-selected", m==="recorrido");
+  render();
+}
+function select(id){
+  state.sel = id;
+  if (state.mode !== "explorar"){ state.mode = "explorar"; $("#tab-explorar").setAttribute("aria-selected",true); $("#tab-recorrido").setAttribute("aria-selected",false); }
+  render();
+}
+
+$("#tab-explorar").addEventListener("click", function(){ setMode("explorar"); });
+$("#tab-recorrido").addEventListener("click", function(){ setMode("recorrido"); });
+$("#btn-all").addEventListener("click", function(){ state.sel = null; setMode("explorar"); });
+$all(".chip").forEach(function(c){
+  c.addEventListener("click", function(){
+    state.filter = c.dataset.filter;
+    $all(".chip").forEach(function(x){ x.setAttribute("aria-pressed", x===c); });
+    refresh();
+  });
+});
+
+/* ---------- Agent cards ---------- */
+var agents = $("#agents");
+["familias","empresas","gobierno","mundo","bienes","trabajo","financiero"].forEach(function(id){
+  var n = NODES[id];
+  var b = document.createElement("button");
+  b.className = "agent-btn" + (n.kind==="mercado" ? " mk" : "");
+  b.innerHTML = '<span class="ico"><svg aria-hidden="true"><use href="#i-'+id+'"/></svg></span><span><b>'+esc(nodeTitle(id))+'</b><small>'+(n.kind==="mercado"?"Mercado":"Agente económico")+'</small></span>';
+  b.addEventListener("click", function(){
+    select(id);
+    $("#explorar").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"});
+  });
+  agents.appendChild(b);
+});
+
+/* ---------- Animation ---------- */
+var SPEED = 70; // px per second
+var last = 0, clock = 0;
+function place(){
+  FLOWS.forEach(function(f){
+    f.pts.forEach(function(p){
+      var t = ((p.o + clock*SPEED/f.len) % 1);
+      var pt = f.path.getPointAtLength(t*f.len);
+      if (p.e.tagName === "circle"){ p.e.setAttribute("cx", pt.x); p.e.setAttribute("cy", pt.y); }
+      else p.e.setAttribute("transform", "translate("+pt.x+" "+pt.y+") rotate(45)");
+    });
+  });
+}
+function frame(ts){
+  if (last) clock += Math.min(0.05, (ts-last)/1000);
+  last = ts;
+  place();
+  if (state.playing) requestAnimationFrame(frame); else last = 0;
+}
+function setPlaying(p){
+  state.playing = p;
+  $("#btn-play").setAttribute("aria-pressed", p);
+  $("#play-txt").textContent = p ? "Pausar" : "Animar";
+  $("#play-ico").setAttribute("d", p ? "M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" : "M8 5v14l11-7z");
+  if (p) requestAnimationFrame(frame);
+}
+$("#btn-play").addEventListener("click", function(){ setPlaying(!state.playing); });
+place();
+setPlaying(state.playing);
+document.addEventListener("visibilitychange", function(){ if (document.hidden && state.playing){ state._resume = true; state.playing = false; } else if (!document.hidden && state._resume){ state._resume = false; setPlaying(true); } });
+
+/* ---------- Quiz ---------- */
+var qWrap = $("#questions"), score = 0;
+function buildQuiz(){
+  score = 0; $("#score").textContent = "0";
+  qWrap.innerHTML = "";
+  QUIZ.forEach(function(item, qi){
+    var d = document.createElement("div"); d.className = "q";
+    d.innerHTML = '<p>'+(qi+1)+'. '+esc(item.q)+'</p><div class="opts"></div><div class="fb" hidden></div>';
+    var opts = d.querySelector(".opts"), fb = d.querySelector(".fb");
+    item.o.forEach(function(txt, oi){
+      var b = document.createElement("button"); b.className = "opt"; b.textContent = txt; b.id = "q"+qi+"o"+oi;
+      b.addEventListener("click", function(){
+        $all("#questions .q:nth-child("+(qi+1)+") .opt").forEach(function(x, xi){
+          x.disabled = true;
+          if (xi===item.a) x.classList.add("ok");
+        });
+        if (oi===item.a){ score++; $("#score").textContent = score; fb.textContent = "✓ "+item.fb; }
+        else { b.classList.add("no"); fb.textContent = "La respuesta es “"+item.o[item.a]+"”. "+item.fb.replace(/^Correcto: /,""); }
+        fb.hidden = false;
+      });
+      opts.appendChild(b);
+    });
+    qWrap.appendChild(d);
+  });
+}
+buildQuiz();
+$("#quiz-reset").addEventListener("click", buildQuiz);
+
+render();
+})();
+</script>
+</body>
+</html>
