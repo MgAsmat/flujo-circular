@@ -303,7 +303,7 @@ footer p{margin:0;max-width:70ch}
   <section class="hero" id="inicio">
     <h1>La economía es un <span class="loop">circuito</span> que nunca se detiene.</h1>
     <div class="hero-side">
-      <p>Cada día trabajamos, compramos, ahorramos, pedimos préstamos y pagamos impuestos. Esas decisiones conectan a <strong>familias, empresas, Gobierno y el resto del mundo</strong> a través de tres mercados. Toca cualquier pieza del diagrama para ver qué entrega y qué recibe.</p>
+      <p>Todos los días las personas, empresas e instituciones públicas interactúan en transacciones económicas: compran y venden bienes y servicios producidos en el país o en otros países, trabajan, ahorran o piden préstamos y pagan impuestos. Todo esto ocurre en tres mercados: el de <strong>bienes y servicios</strong>, el <strong>laboral</strong> y el <strong>financiero</strong>. Toca cualquier pieza del diagrama para ver qué entrega y qué recibe.</p>
       <div class="legend" role="group" aria-label="Filtrar flujos">
         <button class="chip" data-filter="todos" aria-pressed="true"><span class="both"><span class="sq"></span><span class="dot"></span></span>Todos</button>
         <button class="chip" data-filter="real" aria-pressed="false"><span class="sq"></span>Flujo real</button>
@@ -356,13 +356,13 @@ footer p{margin:0;max-width:70ch}
         <h3><span class="sq" style="width:14px;height:14px"></span>Flujo real</h3>
         <div class="lane" aria-hidden="true"><span class="sq"></span><span class="sq" style="animation-delay:-1.6s"></span><span class="sq" style="animation-delay:-3.3s"></span></div>
         <p>Es todo lo que se produce y se entrega: los bienes y servicios que las empresas venden, y el trabajo que las familias ofrecen.</p>
-        <ul><li>Pan, ropa, celulares, electrodomésticos</li><li>Transporte, educación, salud, entretenimiento</li><li>Horas de trabajo, conocimientos y talento</li></ul>
+        <ul><li>Alimentos, ropa, electrodomésticos, cemento</li><li>Transporte, educación, salud, entretenimiento</li><li>Insumos para producir, exportaciones e importaciones</li><li>Trabajo, habilidades y conocimientos</li></ul>
       </article>
       <article class="d">
         <h3><span class="dot" style="width:14px;height:14px"></span>Flujo de dinero</h3>
         <div class="lane" aria-hidden="true"><span class="dot" style="animation-direction:reverse"></span><span class="dot" style="animation-direction:reverse;animation-delay:-1.6s"></span><span class="dot" style="animation-direction:reverse;animation-delay:-3.3s"></span></div>
         <p>Son los pagos en soles (S/) que van en sentido contrario: lo que gastan las familias, lo que las empresas pagan como salarios, los impuestos, el ahorro y los préstamos.</p>
-        <ul><li>Gasto en consumo e ingresos por ventas</li><li>Salarios, impuestos y compras públicas</li><li>Ahorro, créditos y pago de intereses</li></ul>
+        <ul><li>Gasto en consumo e ingresos por ventas</li><li>Remuneraciones, impuestos y transferencias</li><li>Ahorro y créditos</li></ul>
       </article>
     </div>
   </section>
@@ -413,78 +413,81 @@ var NODES = {
 var FLOWS = [
   {id:"f_gasto",   from:"familias", to:"bienes",   k:"dinero", label:"Gasto en consumo",      d:"M112 314 C112 170 240 70 380 72"},
   {id:"f_bienes",  from:"bienes",   to:"familias", k:"real",   label:"Bienes y servicios",    d:"M382 110 C270 118 176 196 166 312"},
-  {id:"e_oferta",  from:"empresas", to:"bienes",   k:"real",   label:"Producción",            d:"M888 314 C888 170 760 70 620 72"},
-  {id:"e_ventas",  from:"bienes",   to:"empresas", k:"dinero", label:"Ingresos por ventas",   d:"M618 110 C730 118 824 196 834 312"},
+  {id:"e_oferta",  from:"empresas", to:"bienes",   k:"real",   label:"Bienes producidos",     d:"M888 314 C888 170 760 70 620 72"},
+  {id:"e_insumos", from:"bienes",   to:"empresas", k:"real",   label:"Insumos",               d:"M620 90 C748 94 858 184 861 308", lt:.3},
+  {id:"e_ventas",  from:"bienes",   to:"empresas", k:"dinero", label:"Ingresos por ventas",   d:"M618 112 C730 120 822 198 832 314", lt:.6},
   {id:"f_trabajo", from:"familias", to:"trabajo",  k:"real",   label:"Trabajo",               d:"M112 426 C112 570 240 666 380 660"},
-  {id:"f_salario", from:"trabajo",  to:"familias", k:"dinero", label:"Salarios",              d:"M382 624 C270 616 176 540 166 428"},
+  {id:"f_salario", from:"trabajo",  to:"familias", k:"dinero", label:"Remuneraciones",        d:"M382 624 C270 616 176 540 166 428"},
   {id:"e_trabajo", from:"trabajo",  to:"empresas", k:"real",   label:"Trabajadores",          d:"M620 660 C760 666 888 570 888 426"},
-  {id:"e_salario", from:"empresas", to:"trabajo",  k:"dinero", label:"Pago de salarios",      d:"M834 428 C824 540 730 616 618 624"},
+  {id:"e_salario", from:"empresas", to:"trabajo",  k:"dinero", label:"Remuneraciones",        d:"M834 428 C824 540 730 616 618 624"},
   {id:"f_imp",     from:"familias", to:"gobierno", k:"dinero", label:"Impuestos",             d:"M198 346 C280 300 360 262 444 268"},
-  {id:"g_serv",    from:"gobierno", to:"familias", k:"real",   label:"Servicios públicos",    d:"M450 300 C370 318 290 352 200 376"},
+  {id:"g_transf",  from:"gobierno", to:"familias", k:"dinero", label:"Transferencias",        d:"M450 300 C370 318 290 352 200 376"},
   {id:"e_imp",     from:"empresas", to:"gobierno", k:"dinero", label:"Impuestos",             d:"M802 346 C720 300 640 262 556 268"},
-  {id:"g_compras", from:"gobierno", to:"empresas", k:"dinero", label:"Compras y obras públicas", d:"M550 300 C630 318 710 352 800 376"},
+  {id:"g_ahorro",  from:"gobierno", to:"financiero", k:"dinero", label:"Ahorro",              d:"M486 336 L486 434", lx:-36},
+  {id:"mf_cred_g", from:"financiero", to:"gobierno", k:"dinero", label:"Crédito",             d:"M514 436 L514 338", lx:36},
   {id:"f_ahorro",  from:"familias", to:"financiero", k:"dinero", label:"Ahorro",              d:"M188 406 C250 440 320 458 384 460"},
-  {id:"mf_cred_f", from:"financiero", to:"familias", k:"dinero", label:"Créditos",           d:"M390 490 C310 500 230 478 176 424"},
-  {id:"mf_prest",  from:"financiero", to:"empresas", k:"dinero", label:"Préstamos para invertir", d:"M612 462 C690 458 760 440 812 406"},
-  {id:"e_int",     from:"empresas", to:"financiero", k:"dinero", label:"Pago de intereses",  d:"M826 426 C780 480 700 500 614 490"},
+  {id:"mf_cred_f", from:"financiero", to:"familias", k:"dinero", label:"Crédito",            d:"M390 490 C310 500 230 478 176 424"},
+  {id:"mf_prest",  from:"financiero", to:"empresas", k:"dinero", label:"Crédito",            d:"M612 462 C690 458 760 440 812 406"},
+  {id:"e_ahorro",  from:"empresas", to:"financiero", k:"dinero", label:"Ahorro",             d:"M826 426 C780 480 700 500 614 490"},
   {id:"exp",       from:"bienes",   to:"mundo",    k:"real",   label:"Exportaciones",         d:"M620 76 C700 44 780 40 834 70"},
   {id:"imp",       from:"mundo",    to:"bienes",   k:"real",   label:"Importaciones",         d:"M834 108 C780 138 700 136 620 104"}
 ];
 
 var INFO = {
   familias:{
-    lede:"Son la base de la sociedad. Obtienen ingresos trabajando en empresas o en sus propios negocios y los usan para comprar alimentos, transporte, educación y salud.",
-    ej:"Rosa trabaja en una panadería. Con su sueldo paga el pasaje, compra útiles para sus hijos y ahorra una parte cada mes en una caja municipal.",
-    dato:"Las familias cumplen varios papeles a la vez: ofrecen trabajo, consumen, ahorran, piden créditos y pagan impuestos."
+    lede:"Las familias son la base de la sociedad. Reciben ingresos trabajando en las empresas o en sus propios negocios, dinero que utilizan en la compra de diversos bienes y servicios como alimentos, transporte, educación y salud, y en el pago de impuestos. Lo que no gastan, lo ahorran o pagan préstamos.",
+    ej:"Rosa trabaja en una panadería. Con su remuneración paga el pasaje, compra útiles para sus hijos y ahorra una parte cada mes en una caja municipal.",
+    dato:"Las familias también interactúan con las instituciones financieras: ahorran, solicitan créditos y los pagan."
   },
   empresas:{
-    lede:"Producen los bienes y servicios que usamos a diario, desde alimentos y transporte hasta educación y entretenimiento. Para hacerlo contratan trabajadores y, muchas veces, piden préstamos para invertir.",
-    ej:"Una panadería compra harina, contrata a tres panaderos y vende pan cada mañana. Con un préstamo compra un horno nuevo y produce más.",
-    dato:"Las empresas también venden al exterior: el Perú exporta cobre, oro, café y es uno de los mayores exportadores de arándanos del mundo."
+    lede:"Las empresas producen diversos bienes y servicios que consumimos cada día. Por ejemplo, los alimentos, el servicio de transporte, la educación y el entretenimiento.",
+    ej:"Una panadería compra harina como insumo, contrata a tres panaderos y vende pan cada mañana. Con un crédito compra un horno nuevo y produce más.",
+    dato:"Para producir, las empresas contratan personas en el mercado de trabajo, compran insumos, pagan impuestos y ahorran o piden créditos en el mercado financiero."
   },
   gobierno:{
-    lede:"Recauda impuestos de familias y empresas y con esos recursos ofrece servicios públicos: educación, salud, seguridad e infraestructura como pistas, puentes y hospitales.",
-    ej:"Cuando compras un producto, el precio ya incluye el IGV. Ese dinero ayuda a financiar colegios públicos, postas médicas y carreteras.",
-    dato:"El Gobierno también es un gran comprador: contrata a empresas para construir obras y le compra bienes y servicios al mercado."
+    lede:"El Gobierno recibe ingresos principalmente a través de los impuestos que pagan las personas y las empresas, y utiliza estos recursos para proveer servicios públicos como seguridad, salud, educación e infraestructura: carreteras, puentes, hospitales y colegios, entre otros.",
+    ej:"Los impuestos que pagan Rosa y la panadería ayudan a financiar el colegio público de su barrio, la posta médica y la pista por la que pasa su micro.",
+    dato:"El Gobierno también realiza transferencias a las familias, contrata trabajadores en el mercado laboral y, como las personas y las empresas, ahorra y pide créditos en el mercado financiero."
   },
   mundo:{
-    lede:"El comercio internacional permite a los países exportar e importar bienes y servicios. Así se amplían los mercados para nuestras empresas y tenemos más variedad de productos.",
-    ej:"Una agroexportadora de La Libertad vende arándanos a Europa, mientras una tienda de Lima importa computadoras fabricadas en Asia.",
-    dato:"Las exportaciones traen divisas al país; con ellas pagamos las importaciones, como combustibles, maquinaria o el trigo con el que se hace gran parte del pan."
+    lede:"En un mundo globalizado, nuestra relación con el resto del mundo es cada vez más activa: compramos y vendemos productos y servicios del y al exterior.",
+    ej:"Exportamos uvas, espárragos, paltas, minerales como oro, cobre y zinc, y prendas de vestir. Importamos celulares, televisores, microondas y carros, entre otros.",
+    dato:"El comercio internacional nos permite vender más y tener mayor diversidad de productos. El resto del mundo también nos brinda recursos financieros y oportunidades de ahorro e inversión."
   },
   bienes:{
-    lede:"Aquí interactúan personas, empresas y el Gobierno comprando y vendiendo bienes, como alimentos, ropa o electrodomésticos, y servicios, como transporte, educación, salud o entretenimiento.",
-    ej:"El mercado del barrio, una tienda en línea o una cabina de internet: donde se compra y se vende algo, hay un mercado de bienes y servicios.",
-    dato:"El precio es la señal que coordina este mercado: si muchas personas quieren un producto y hay poco, su precio tiende a subir."
+    lede:"En el mercado de bienes y servicios las personas, las empresas y el Gobierno interactúan y compran y venden bienes como alimentos, ropa, electrodomésticos o cemento, y también servicios como transporte, educación, salud y entretenimiento.",
+    ej:"El mercado del barrio, una ferretería que vende cemento o una empresa de transporte: donde se compra y se vende algo, hay un mercado de bienes y servicios.",
+    dato:"Cuando se venden bienes o servicios al exterior se denominan exportaciones, y cuando se compran del exterior, importaciones."
   },
   trabajo:{
-    lede:"Las familias ofrecen su tiempo, sus conocimientos y su esfuerzo; las empresas y el Gobierno los contratan. A cambio, los trabajadores reciben un salario.",
-    ej:"Una estudiante que termina la carrera de enfermería postula a un hospital; el hospital la contrata y le paga una remuneración mensual.",
-    dato:"El salario es el precio del trabajo. Mejor educación y capacitación suelen traducirse en mayor productividad y mejores ingresos."
+    lede:"En el mercado laboral, las personas ofrecen su trabajo, sus habilidades y sus conocimientos a las empresas y al Gobierno, a cambio de lo cual reciben una remuneración.",
+    ej:"Una enfermera recién egresada postula a un hospital; el hospital la contrata y le paga una remuneración mensual.",
+    dato:"Las empresas y el Gobierno necesitan contratar personas para poder producir los bienes y servicios que ofrecen a la sociedad."
   },
   financiero:{
-    lede:"Personas, empresas y el Gobierno depositan aquí el dinero que les sobra y también pueden pedir préstamos. Bancos, cajas y cooperativas conectan a quienes ahorran con quienes necesitan financiamiento.",
-    ej:"Los ahorros de muchas familias en un banco permiten que ese banco preste dinero a una empresa que quiere ampliar su fábrica.",
-    dato:"La tasa de interés es el precio del dinero. El BCRP fija la tasa de interés de referencia para mantener la inflación dentro de su meta de 1 % a 3 % anual."
+    lede:"En el mercado financiero, las personas, las empresas y el Gobierno depositan sus excedentes de dinero y también pueden solicitar préstamos.",
+    ej:"Entre las principales instituciones financieras se encuentran los bancos, las financieras, las cajas municipales y rurales, y las Edpymes.",
+    dato:"Estas transacciones de ahorro, inversión y crédito también se realizan con entidades financieras del exterior."
   }
 };
 
 var TOUR = [
-  {t:"Rosa ofrece su trabajo", flows:["f_trabajo","e_trabajo"], txt:"Rosa vive en Arequipa y trabaja en una panadería. En el mercado de trabajo, su tiempo y su esfuerzo llegan a la empresa."},
-  {t:"Recibe su sueldo", flows:["e_salario","f_salario"], txt:"A fin de mes, la panadería le paga su salario. Así el dinero pasa de la empresa a la familia."},
-  {t:"Sale de compras", flows:["f_gasto","e_ventas","f_bienes"], txt:"Rosa compra pan, útiles y paga el pasaje. Su gasto se convierte en los ingresos por ventas de muchas empresas."},
-  {t:"Harina que llega de lejos", flows:["imp","e_oferta","exp"], txt:"La panadería usa trigo importado para producir. Al mismo tiempo, otras empresas peruanas exportan cobre o arándanos y traen divisas al país."},
-  {t:"Todos aportan", flows:["f_imp","e_imp","g_serv","g_compras"], txt:"En cada compra Rosa paga IGV y la panadería paga impuesto a la renta. Con esos recursos el Gobierno financia colegios, postas y obras que construyen las empresas."},
-  {t:"Ahorro que se vuelve inversión", flows:["f_ahorro","mf_prest","e_int"], txt:"Rosa ahorra una parte de su sueldo. El banco presta ese dinero a la panadería para comprar un horno nuevo, y la panadería le devuelve el préstamo con intereses."},
+  {t:"Rosa ofrece su trabajo", flows:["f_trabajo","e_trabajo"], txt:"Rosa trabaja en una panadería. En el mercado de trabajo ofrece su tiempo, sus habilidades y sus conocimientos a la empresa."},
+  {t:"Recibe su remuneración", flows:["e_salario","f_salario"], txt:"A fin de mes, la panadería le paga su remuneración. Así el dinero pasa de la empresa a la familia."},
+  {t:"Sale de compras", flows:["f_gasto","f_bienes","e_ventas"], txt:"Rosa compra alimentos, útiles y paga el pasaje. Su gasto se convierte en los ingresos por ventas de muchas empresas."},
+  {t:"La panadería produce", flows:["e_insumos","e_oferta"], txt:"Con esos ingresos, la panadería compra insumos como harina y levadura, y vuelve a ofrecer pan en el mercado de bienes y servicios."},
+  {t:"Productos del y al exterior", flows:["imp","exp"], txt:"Rosa compra un celular importado. Al mismo tiempo, empresas peruanas exportan uvas, paltas, espárragos y cobre al resto del mundo."},
+  {t:"Impuestos y transferencias", flows:["f_imp","e_imp","g_transf"], txt:"Rosa y la panadería pagan impuestos. Con esos recursos el Gobierno ofrece seguridad, salud, educación e infraestructura, y realiza transferencias a las familias."},
+  {t:"Ahorro y crédito", flows:["f_ahorro","e_ahorro","g_ahorro","mf_prest","mf_cred_f","mf_cred_g"], txt:"Lo que no gastan, familias, empresas y Gobierno lo depositan en el mercado financiero. Esos ahorros permiten dar créditos: la panadería pide uno para comprar un horno nuevo."},
   {t:"El circuito vuelve a empezar", flows:"all", txt:"Con el nuevo horno, la panadería produce más y contrata a otra persona. Más ingresos, más consumo, más producción: la economía sigue girando."}
 ];
 
 var QUIZ = [
-  {q:"¿Qué recibe una familia a cambio de ofrecer su trabajo?", o:["Salarios","Impuestos","Importaciones"], a:0, fb:"Correcto: en el mercado de trabajo, el salario es el pago por el trabajo."},
-  {q:"¿En qué mercado se determina la tasa de interés?", o:["Mercado de trabajo","Mercado financiero","Mercado de bienes y servicios"], a:1, fb:"La tasa de interés es el precio del dinero que se ahorra o se presta."},
-  {q:"Cuando el Perú vende arándanos a Europa, se trata de…", o:["Una importación","Una transferencia","Una exportación"], a:2, fb:"Vender al exterior es exportar; ingresan divisas al país."},
-  {q:"¿Con qué financia el Gobierno la salud, la educación y la seguridad pública?", o:["Con los impuestos","Con las importaciones","Con los salarios de sus trabajadores"], a:0, fb:"Los impuestos de familias y empresas financian los servicios públicos."},
-  {q:"¿Qué circula en el flujo real?", o:["Solo dinero","Bienes, servicios y trabajo","Créditos e intereses"], a:1, fb:"El flujo real es lo que se produce y se entrega; el dinero va en sentido contrario."}
+  {q:"¿Qué reciben las personas a cambio de ofrecer su trabajo?", o:["Una remuneración","Impuestos","Importaciones"], a:0, fb:"Correcto: en el mercado laboral, las personas reciben una remuneración por su trabajo."},
+  {q:"¿Dónde depositan sus excedentes de dinero las personas, las empresas y el Gobierno?", o:["En el mercado de trabajo","En el mercado financiero","En el mercado de bienes y servicios"], a:1, fb:"En el mercado financiero se deposita el dinero que sobra y se solicitan préstamos."},
+  {q:"Cuando el Perú vende paltas a otro país, se trata de…", o:["Una importación","Una transferencia","Una exportación"], a:2, fb:"Vender bienes o servicios al exterior se denomina exportación."},
+  {q:"¿De dónde obtiene el Gobierno sus ingresos principalmente?", o:["De los impuestos","De las importaciones","De las remuneraciones que paga"], a:0, fb:"Los impuestos de personas y empresas financian seguridad, salud, educación e infraestructura."},
+  {q:"¿Cuál de estas es una institución del mercado financiero?", o:["Una caja municipal","Una fábrica de cemento","Un colegio público"], a:0, fb:"Bancos, financieras, cajas municipales y rurales y Edpymes forman parte del mercado financiero."}
 ];
 
 /* ---------- Helpers ---------- */
@@ -514,7 +517,8 @@ FLOWS.forEach(function(f){
     f.pts.push({e:p, o:i/n});
   }
   // label
-  var mid = f.path.getPointAtLength(f.len*0.5);
+  var mid = f.path.getPointAtLength(f.len*(f.lt||0.5));
+  mid = {x:mid.x+(f.lx||0), y:mid.y};
   var g = el("g", {"class":"flabel "+f.k}, gLabels);
   var r = el("rect", {rx:11, ry:11}, g);
   var tx = el("text", {x:mid.x, y:mid.y+4.3, "text-anchor":"middle"}, g);
